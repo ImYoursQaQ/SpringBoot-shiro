@@ -3,8 +3,7 @@ package com.itheima.shiro;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import org.apache.shiro.crypto.DefaultBlockCipherService;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
