@@ -1,5 +1,6 @@
 package com.itheima.controller;
 
+import groovy.util.logging.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -8,6 +9,8 @@ import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class UserController {
+	Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	/**
 	 * 测试方法
@@ -74,14 +78,18 @@ public class UserController {
 		 */
 		//1.获取Subject
 		Subject subject = SecurityUtils.getSubject();
+		if (subject.isRemembered()){
+			logger.info("{} has been remembered!",name);
+		}else {
+			logger.info("{} is new login",name);
+		}
 
 		//2.封装用户数据
 		UsernamePasswordToken token = new UsernamePasswordToken(name,password);
-
+		token.setRememberMe(true);
 		//3.执行登录方法
 		try {
 			subject.login(token);
-
 			//登录成功
 			//跳转到test.html
 			return "redirect:/testThymeleaf";

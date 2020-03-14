@@ -3,10 +3,13 @@ package com.itheima.shiro;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.shiro.crypto.DefaultBlockCipherService;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +49,7 @@ public class ShiroConfig {
 		Map<String,String> filterMap = new LinkedHashMap<String,String>();
 		filterMap.put("/add", "authc");
 		filterMap.put("/update", "authc");
-		filterMap.put("/testThymeleaf", "anon");
+		filterMap.put("/testThymeleaf", "user");
 		//放行login.html页面
 		filterMap.put("/login", "anon");
 //		filterMap.put("/*", "authc");
@@ -74,10 +77,13 @@ public class ShiroConfig {
 	 * 创建DefaultWebSecurityManager
 	 */
 	@Bean(name="securityManager")
-	public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm")UserRealm userRealm){
+	public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm")UserRealm userRealm,
+																  CookieRememberMeManager rememberMeManager){
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		//关联realm
 		securityManager.setRealm(userRealm);
+		//        将rememberMeManager 注入到securityManager
+		securityManager.setRememberMeManager(rememberMeManager);
 		return securityManager;
 	}
 	
@@ -112,4 +118,28 @@ public class ShiroConfig {
 		creator.setProxyTargetClass(true);
 		return creator;
 	}
+
+	/**
+	 * rememberMe管理器, cipherKey生成见{@code Base64Test.java}
+	 */
+	@Bean
+	public CookieRememberMeManager rememberMeManager(SimpleCookie rememberMeCookie) {
+		CookieRememberMeManager manager = new CookieRememberMeManager();
+		manager.setCipherKey(Base64.decode("Z3VucwAAAAAAAAAAAAAAAA=="));
+//		manager.setCipherService(new DefaultBlockCipherService("MD5"));
+		manager.setCookie(rememberMeCookie);
+		return manager;
+	}
+
+	/**
+	 * 记住密码Cookie
+	 */
+	@Bean
+	public SimpleCookie rememberMeCookie() {
+		SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+		simpleCookie.setHttpOnly(true);
+		simpleCookie.setMaxAge(7 * 24 * 60 * 60);//7天
+		return simpleCookie;
+	}
+
 }
