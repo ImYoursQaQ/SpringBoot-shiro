@@ -8,9 +8,13 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.SimpleByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itheima.domain.User;
@@ -68,9 +72,15 @@ public class UserRealm extends AuthorizingRealm{
 			//用户名不存在
 			return null;//shiro底层会抛出UnKnowAccountException
 		}
-		
 		//2.判断密码
-		return new SimpleAuthenticationInfo(user,user.getPassword(),"");
+
+		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+		//使用随机数生成盐值
+		//SimpleByteSource salt = new SimpleByteSource(rng.nextBytes());
+		SimpleByteSource salt = new SimpleByteSource("test");
+		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), "");
+		info.setCredentialsSalt(salt);
+		return info;
 	}
 
 }

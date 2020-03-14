@@ -2,6 +2,8 @@ package com.itheima;
 
 import com.itheima.domain.User;
 import com.itheima.service.UserService;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,5 +31,11 @@ public class SpringBoot {
     public void testDataBase(){
         User byId = userService.findById(1);
         logger.info("{}",byId);
+    }
+
+    @Test
+    public void createPasswordWithSalted(){
+        SimpleHash simpleHash = new SimpleHash("MD5", "123456", "test", 1);
+        logger.info(simpleHash.toString());
     }
 }

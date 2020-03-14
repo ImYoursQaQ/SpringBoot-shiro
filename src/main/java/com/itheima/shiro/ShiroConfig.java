@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
@@ -94,7 +95,7 @@ public class ShiroConfig {
 	public UserRealm getRealm(){
 		UserRealm userRealm = new UserRealm();
 		//配置凭证策略为MD5哈希
-		userRealm.setCredentialsMatcher(new HashedCredentialsMatcher("MD5"));
+        userRealm.setCredentialsMatcher(new HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME));
 		return userRealm;
 	}
 	
