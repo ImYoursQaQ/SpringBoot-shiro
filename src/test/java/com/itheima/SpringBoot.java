@@ -1,7 +1,10 @@
 package com.itheima;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.itheima.domain.User;
 import com.itheima.service.UserService;
+import com.jayway.jsonpath.internal.JsonFormatter;
+import groovy.util.logging.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.Test;
@@ -38,4 +41,9 @@ public class SpringBoot {
         SimpleHash simpleHash = new SimpleHash("MD5", "123456", "test", 1);
         logger.info(simpleHash.toString());
     }
+    @Test
+    public void testJson2Object(){
+
+    }
+
 }

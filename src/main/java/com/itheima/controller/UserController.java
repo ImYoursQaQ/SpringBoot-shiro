@@ -1,20 +1,25 @@
 package com.itheima.controller;
 
-import groovy.util.logging.Slf4j;
+
+import com.alibaba.fastjson.JSONObject;
+import com.itheima.domain.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class UserController {
@@ -27,6 +32,17 @@ public class UserController {
 	@ResponseBody
 	public String hello(){
 		System.out.println("UserController.hello()");
+		return "ok";
+	}
+
+	@PostMapping("/json")
+	@RequiresGuest
+	@ResponseBody
+	public String testJson(HttpServletRequest request) throws Exception{
+		try (ServletInputStream inputStream = request.getInputStream()) {
+			User o = JSONObject.parseObject(inputStream, User.class);
+			logger.info("{}",o.toString());
+		}
 		return "ok";
 	}
 
